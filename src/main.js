@@ -5,6 +5,8 @@ import { iDCRouter } from "./router";
 Vue.prototype.$iDCRouter = iDCRouter;
 import { store } from "./store";
 
+import { request } from "./request";
+Vue.prototype.$request = request;
 import { $public } from "./public";
 Vue.prototype.$public = $public;
 
