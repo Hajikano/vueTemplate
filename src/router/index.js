@@ -14,12 +14,20 @@ const routerMap = [
         component: () => import(`@/pages/login`),
     },
     {
-        path: "/home",
-        name: "home",
+        path: "/",
+        name: "index",
         meta: {
             isAuth: true,
         },
-        component: () => import(`@/pages/home`),
+        component: () => import(`@/pages/index`),
+    },
+    {
+        path: "/404",
+        name: "404",
+        meta: {
+            isAuth: false,
+        },
+        component: () => import(`@/pages/404`),
     },
 ];
 
@@ -27,28 +35,50 @@ const router = new Router({
     routes: routerMap,
 });
 
+const iDCRouter = new DCRouter(router);
+export { iDCRouter };
+
 router.beforeEach((to, from, next) => {
     const { token } = store.state;
-    if (to.meta.isAuth && token === null) {
-        // 未登陆且需拦截
-        router.replace("/login");
-    } else {
-        // 已登陆或无需拦截
-        if (to.path === "/") {
-            router.replace("/login");
-        } else {
-            if (iDCRouter.stack.length > 1 && to.path === iDCRouter.stack[iDCRouter.stack.length - 2].path) {
-                // 浏览器后退一级
-                iDCRouter.pop(true);
+    if (iDCRouter.state) {
+        // 应用内跳转
+        iDCRouter.stateToggle(false);
+        if (to.name === null) {
+            if (from.name === "404") {
+                next(false);
             } else {
-                iDCRouter.push(to.path, true);
+                iDCRouter.push("/404");
+            }
+        } else {
+            if (to.meta.isAuth && token === null) {
+                iDCRouter.push("/login");
+            } else {
+                next();
             }
         }
+    } else {
+        // 浏览器跳转
+        if (iDCRouter.getTopRoute() === null) {
+            if (to.meta.isAuth && token === null) {
+                iDCRouter.push("/login");
+            } else {
+                if (to.name !== null) {
+                    iDCRouter.push(to.path);
+                } else {
+                    iDCRouter.push("/");
+                }
+            }
+        } else if (to.name === null) {
+            if (from.name === "404") {
+                next(false);
+            } else {
+                iDCRouter.push("/404");
+            }
+        } else {
+            next(false);
+        }
     }
-    next();
 });
-
-export const iDCRouter = new DCRouter(router);
 
 //重写Router的push,replace方法
 //使得定位到同一路由时不报错

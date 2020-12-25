@@ -1,19 +1,15 @@
 <template>
     <div id="app">
-        <router-view :hidden="$route.path !== item.path" v-for="item in stack" :key="item.path"></router-view>
+        <router-view :hidden="item.routeID !== $iDCRouter.getTopRoute().routeID" v-for="item in $iDCRouter.stack" :key="item.routeID"> </router-view>
     </div>
 </template>
 
 <script>
-// import HelloWorld from "./components/HelloWorld.vue";
-
 export default {
     name: "App",
     components: {},
     data() {
-        return {
-            stack: this.$iDCRouter.stack,
-        };
+        return {};
     },
     mounted() {},
 };
@@ -24,7 +20,6 @@ export default {
     font-family: Avenir, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-align: center;
     color: #2c3e50;
 }
 </style>

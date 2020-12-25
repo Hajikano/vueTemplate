@@ -1,15 +1,13 @@
 <template>
     <div id="app">
+        index
     </div>
 </template>
 
 <script>
 export default {
     name: "App",
-    mounted(){},
-    methods:{
-        test(){}
-    }
+    mounted(){}
 };
 </script>
 
